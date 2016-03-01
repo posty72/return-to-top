@@ -43,71 +43,93 @@ returnToTop = (function(s) {
   }
 
   function styleHTML(s){
+    var obj = styles(s), 
+    styleEl = document.createElement('style'), 
+    styleContent = '';
+
+    for(var key in obj) {
+      styleContent += key + '{';
+
+      for(var key2 in obj[key]) {
+        styleContent += key2 + ': ' + obj[key][key2] + ';';
+      }
+      styleContent += '}';
+    }
+
+    styleEl.innerHTML = styleContent;
+
+    return styleEl;
+  }
+
+  function styles(s){
     var placement = (s.placement !== 'left') ? 'right' : 'left',
-      color = (!s.color) ? 'background-color: #000;' : 'background-color: '+s.color+';',
-      arrowColor = (!s.arrowColour) ? '#ffffff' : s.arrowColour,
-      shape = {
-      'bottom': (s.shape !== 'square') ? '10px;' : '0px;',
-      'borderRadius': (s.shape !== 'square') ? 'border-radius: 99em;' : '',
-      'boxShadow': (s.shape !== 'square') ? 'box-shadow: 0px 0px 20px rgba(0,0,0,0.25);' : '',
+    color = (!s.color) ? '#000' : s.color,
+    arrowColor = (!s.arrowColour) ? '#ffffff' : s.arrowColour,
+    shape = {
+      'bottom': (s.shape !== 'square') ? '10px' : '0px',
+      'borderRadius': (s.shape !== 'square') ? '99em' : 'none',
+      'boxShadow': (s.shape !== 'square') ? '0px 0px 20px rgba(0,0,0,0.25)' : 'none',
       'color': color
     },
-    styles = '#returnToTopContainer {';
-    styles +=   'position: fixed;';
-    styles +=   'width: 50px;';
-    styles +=   'height: 50px;';
-    styles +=   placement + ': 10px;';
-    styles +=   'bottom: '+ shape.bottom;
-    styles +=   shape.borderRadius;
-    styles +=   shape.boxShadow;
-    styles +=   'overflow: hidden;';
-    styles +=   color;
-    styles +=   'z-index: 100;';
-    styles +=   'cursor: pointer;';
-    styles +=   'opacity: 0;';
-    styles += '}';
+    obj = {
+      '#returnToTopContainer': {
+         'position': 'fixed',
+         'width': '50px',
+         'height': '50px',
+         'placement': '10px',
+         'bottom': shape.bottom,
+         'border-radius': shape.borderRadius,
+         'box-shadow': shape.boxShadow,
+         'overflow': 'hidden',
+         'background-color': color,
+         'z-index': '100',
+         'cursor': 'pointer',
+         'opacity': '0'
+      },
   
-    styles += '#returnToTop {';
-    styles +=   'z-index: 100;';
-    styles +=   'cursor: pointer;';
-    styles +=   color;
-    styles +=   'position: absolute;';
-    styles +=   'top: 0;';
-    styles +=   'left: 0;';
-    styles +=   'width: 100%;';
-    styles +=   'height: 100%;';
-    styles += '}';
+     '#returnToTop': {
+       'z-index': '100',
+       'cursor': 'pointer',
+       'background-color': color,
+       'position': 'absolute',
+       'top': '0',
+       'left': '0',
+       'width': '100%',
+       'height': '100%'
+     },
 
-    styles += '#returnToTop .wrapper {';
-    styles +=   'position: relative;';
-    styles +=   'width: 100%;';
-    styles +=   'height: 100%';
-    styles += '}';
+     '#returnToTop .wrapper': {
+       'position': 'relative',
+       'width': '100%',
+       'height': '100%',
+     },
 
-    styles += '#returnToTop .wrapper::before,';
-    styles += '#returnToTop .wrapper::after {';
-    styles +=   'content: "";';
-    styles +=   'position: absolute;';
-    styles += '}';
+     '#returnToTop .wrapper::before,#returnToTop .wrapper::after': {
+       'content': '""',
+       'position': 'absolute'
+     },
 
-    styles += '#returnToTop .wrapper::before {';
-    styles +=   'height: 40%;';
-    styles +=   'top: 25%;';
-    styles +=   'left: 35%;';
-    styles +=   'border-left: 3px solid '+arrowColor+';';
-    styles += '}';
+     '#returnToTop .wrapper::before': {
+       'height': '40%',
+       'top': '25%',
+       'left': '35%',
+       'border-left': '3px solid '+arrowColor
+     },
 
-    styles += '#returnToTop .wrapper::after {';
-    styles +=   'height: 0;';
-    styles +=   'width: 40%;';
-    styles +=   'bottom: 35%;';
-    styles +=   'left: 35%;';
-    styles +=   'border-top: 3px solid '+arrowColor+';';
-    styles += '}';
+     '#returnToTop .wrapper::after': {
+       'height': '0',
+       'width': '40%',
+       'bottom': '35%',
+       'left': '35%',
+       'border-top': '3px solid '+arrowColor
+     }
+   };
 
-    var styleEl = document.createElement('style');
-    styleEl.innerHTML = styles;
-    return styleEl;
+   obj['#returnToTopContainer'][placement] = '10px'; // Could be more elegant
+
+   return obj;
+    // var styleEl = document.createElement('style');
+    // styleEl.innerHTML =     return styleEl;
   }
 
   function setReturnTopOpacity(el) {
