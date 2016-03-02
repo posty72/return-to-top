@@ -1,0 +1,18 @@
+{
+  "name": "ReturnToTop",
+  "homepage": "https://github.com/posty72/return-to-top",
+  "authors": [
+    "posty72 <josh.post.001@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
