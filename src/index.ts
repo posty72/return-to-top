@@ -33,6 +33,9 @@ export class ReturnToTop {
     };
 
     constructor(SETTINGS?: Settings) {
+        this.setReturnTopRotation = this.setReturnTopRotation.bind(this)
+        this.setReturnTopOpacity = this.setReturnTopOpacity.bind(this)
+
         if (SETTINGS || typeof SETTINGS === 'object') {
             this.settings = SETTINGS;
         }
@@ -52,8 +55,7 @@ export class ReturnToTop {
             this.setReturnTopOpacity(returnTopContainerEl);
         });
 
-        returnTopEl.addEventListener('mousedown', this.scrollToTop);
-        returnTopEl.addEventListener('touchstart', this.scrollToTop);
+        returnTopEl.addEventListener('click', this.scrollToTop);
     }
 
     elementHTML(): HTMLElement {
