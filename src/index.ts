@@ -7,55 +7,60 @@ const BETWEEN_PAGELOAD_CHECKS: number = 50;
 const DEGREES_TO_TURN: number = 90;
 
 
-enum Placement {
+export enum ReturnToTopPlacement {
     right = 'right',
     left = 'left',
 }
 
-enum Shape {
+export enum ReturnToTopShape {
     circle = 'circle',
     square = 'square',
 }
 
 interface Settings {
-    arrowColour: string,
-    placement: Placement,
-    color: string,
-    shape: Shape,
+    arrowColour?: string,
+    placement?: ReturnToTopPlacement,
+    color?: string,
+    shape?: ReturnToTopShape,
 }
 
 export class ReturnToTop {
     settings: Settings = {
         arrowColour: '#FFFFFF',
-        placement: Placement.right,
+        placement: ReturnToTopPlacement.right,
         color: '#A11222',
-        shape: Shape.square,
+        shape: ReturnToTopShape.square,
     };
+    returnTopEl: HTMLElement
+    returnTopContainerEl: HTMLElement
 
     constructor(SETTINGS?: Settings) {
         this.setReturnTopRotation = this.setReturnTopRotation.bind(this)
         this.setReturnTopOpacity = this.setReturnTopOpacity.bind(this)
 
         if (SETTINGS || typeof SETTINGS === 'object') {
-            this.settings = SETTINGS;
+            this.settings = {
+                ...this.settings,
+                ...SETTINGS
+            };
         }
 
-        const returnTopContainerEl = this.elementHTML();
-        const returnTopEl = returnTopContainerEl.children[0];
+        this.returnTopContainerEl = this.elementHTML();
+        this.returnTopEl = this.returnTopContainerEl.children[0] as HTMLElement;
         const timer = setInterval(() => {
             if (document.readyState === 'complete') {
                 document.getElementsByTagName('head')[0].appendChild(this.styleHTML());
-                document.getElementsByTagName('body')[0].appendChild(returnTopContainerEl);
+                document.getElementsByTagName('body')[0].appendChild(this.returnTopContainerEl);
                 clearInterval(timer);
             }
         }, BETWEEN_PAGELOAD_CHECKS);
 
         window.addEventListener('scroll', () => {
-            this.setReturnTopRotation(returnTopEl as HTMLElement);
-            this.setReturnTopOpacity(returnTopContainerEl);
+            this.setReturnTopRotation();
+            this.setReturnTopOpacity();
         });
 
-        returnTopEl.addEventListener('click', this.scrollToTop);
+        this.returnTopEl.addEventListener('click', this.scrollToTop);
     }
 
     elementHTML(): HTMLElement {
@@ -95,7 +100,7 @@ export class ReturnToTop {
                 z-index: 100;
                 cursor: pointer;
                 opacity: 0;
-                ${placement.toString()}: 10px;
+                ${placement || ReturnToTopPlacement.right}: 10px;
             }
 
             #returnToTop {
@@ -137,12 +142,16 @@ export class ReturnToTop {
         `;
     }
 
-    setReturnTopOpacity(el: HTMLElement): void {
-        el.style.opacity = Math.min((window.scrollY / window.innerHeight), 1).toString();
+    setReturnTopOpacity(): void {
+        this.returnTopContainerEl.style.opacity = Math.min((window.scrollY / window.innerHeight), 1).toString();
     }
 
-    setReturnTopRotation(el: HTMLElement): void {
-        el.style.transform = `rotate(${(window.scrollY / ((Math.max(document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight)) - window.innerHeight)) * DEGREES_TO_TURN} deg)`;
+    setReturnTopRotation(): void {
+        const docHeight = Math.max(document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight)
+        const scrolDistance = window.scrollY
+        const windowHeight = window.innerHeight
+
+        this.returnTopEl.style.transform = `rotate(${(scrolDistance / (docHeight - windowHeight)) * DEGREES_TO_TURN}deg)`;
     }
 
     scrollToTop(): void {
@@ -156,5 +165,3 @@ export class ReturnToTop {
         }, BETWEEN_UPDATE_CHECKS);
     }
 }
-
-export default new ReturnToTop();
