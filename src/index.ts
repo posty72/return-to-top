@@ -17,7 +17,7 @@ export enum ReturnToTopShape {
     square = 'square',
 }
 
-interface Settings {
+interface ReturnToTopSettings {
     arrowColour?: string,
     placement?: ReturnToTopPlacement,
     color?: string,
@@ -29,7 +29,7 @@ interface Settings {
 }
 
 export class ReturnToTop {
-    settings: Settings = {
+    settings: ReturnToTopSettings = {
         arrowColour: '#FFFFFF',
         placement: ReturnToTopPlacement.right,
         color: '#000000',
@@ -39,9 +39,11 @@ export class ReturnToTop {
     returnTopEl: HTMLElement
     returnTopContainerEl: HTMLElement
 
-    constructor(SETTINGS?: Settings) {
-        this.setReturnTopRotation = this.setReturnTopRotation.bind(this)
-        this.setReturnTopOpacity = this.setReturnTopOpacity.bind(this)
+    constructor(SETTINGS?: ReturnToTopSettings) {
+        this.setRotation = this.setRotation.bind(this)
+        this.setOpacity = this.setOpacity.bind(this)
+        this.handleClick = this.handleClick.bind(this)
+        this.handleScroll = this.handleScroll.bind(this)
 
         if (SETTINGS || typeof SETTINGS === 'object') {
             this.settings = {
@@ -62,23 +64,12 @@ export class ReturnToTop {
             }
         }, BETWEEN_PAGELOAD_CHECKS);
 
-        window.addEventListener('scroll', () => {
-            if (this.settings.animation === true) {
-                this.setReturnTopRotation();
-                this.setReturnTopOpacity();
-            } else if (this.settings.animation) {
-                if (this.settings.animation.rotate !== false) {
-                    this.setReturnTopRotation();
-                }
-                if (this.settings.animation.fade !== false) {
-                    this.setReturnTopOpacity();
-                }
-            }
-        });
-
-        this.returnTopEl.addEventListener('click', this.scrollToTop);
+        window.addEventListener('scroll', this.handleScroll);
+        this.returnTopEl.addEventListener('click', this.handleClick);
     }
 
+
+    // Element creators
     createElement(): HTMLElement {
         const el = document.createElement('div');
         el.classList.add(baseClassName);
@@ -98,7 +89,9 @@ export class ReturnToTop {
         return styleEl;
     }
 
-    getStyles(): string {
+
+    // Helper
+    public getStyles(): string {
         const { arrowColour, color, placement, shape } = this.settings;
         const shapeObject = {
             bottom: (shape === 'square') ? '0px' : '10px',
@@ -163,17 +156,35 @@ export class ReturnToTop {
         `;
     }
 
-    setReturnTopOpacity(): void {
+
+    // Setters
+    setOpacity(): void {
         this.returnTopContainerEl.style.opacity = Math.min((window.scrollY / window.innerHeight), 1).toString();
     }
 
-    setReturnTopRotation(): void {
+    setRotation(): void {
         const rotation = Math.min((window.scrollY / window.innerHeight), 1) * DEGREES_TO_TURN
 
         this.returnTopEl.style.transform = `rotate(${rotation}deg)`;
     }
 
-    scrollToTop(): void {
+
+    // Handlers
+    private handleScroll(): void {
+        if (this.settings.animation === true) {
+            this.setRotation();
+            this.setOpacity();
+        } else if (this.settings.animation) {
+            if (this.settings.animation.rotate !== false) {
+                this.setRotation();
+            }
+            if (this.settings.animation.fade !== false) {
+                this.setOpacity();
+            }
+        }
+    }
+
+    private handleClick(): void {
         const scroll = -window.scrollY;
         const timer = setInterval(() => {
             if (window.scrollY > 1) {
