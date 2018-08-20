@@ -50,7 +50,8 @@ export class ReturnToTop {
 
         const timer = setInterval(() => {
             if (document.readyState === 'complete') {
-                document.getElementsByTagName('head')[0].appendChild(this.createStyleElement());
+                const headElement = document.getElementsByTagName('head')[0];
+                headElement.insertBefore(this.createStyleElement(), headElement.firstChild);
                 document.getElementsByTagName('body')[0].appendChild(this.returnTopContainerEl);
                 clearInterval(timer);
             }
