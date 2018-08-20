@@ -5,7 +5,7 @@
 const BETWEEN_UPDATE_CHECKS: number = 15;
 const BETWEEN_PAGELOAD_CHECKS: number = 50;
 const DEGREES_TO_TURN: number = 90;
-
+const baseClassName = 'return-to-top'
 
 export enum ReturnToTopPlacement {
     right = 'right',
@@ -28,7 +28,7 @@ export class ReturnToTop {
     settings: Settings = {
         arrowColour: '#FFFFFF',
         placement: ReturnToTopPlacement.right,
-        color: '#A11222',
+        color: '#000000',
         shape: ReturnToTopShape.square,
     };
     returnTopEl: HTMLElement
@@ -45,11 +45,12 @@ export class ReturnToTop {
             };
         }
 
-        this.returnTopContainerEl = this.elementHTML();
+        this.returnTopContainerEl = this.createElement();
         this.returnTopEl = this.returnTopContainerEl.children[0] as HTMLElement;
+
         const timer = setInterval(() => {
             if (document.readyState === 'complete') {
-                document.getElementsByTagName('head')[0].appendChild(this.styleHTML());
+                document.getElementsByTagName('head')[0].appendChild(this.createStyleElement());
                 document.getElementsByTagName('body')[0].appendChild(this.returnTopContainerEl);
                 clearInterval(timer);
             }
@@ -63,32 +64,35 @@ export class ReturnToTop {
         this.returnTopEl.addEventListener('click', this.scrollToTop);
     }
 
-    elementHTML(): HTMLElement {
+    createElement(): HTMLElement {
         const el = document.createElement('div');
-        el.id = 'returnToTopContainer';
-        el.innerHTML = '<div id="returnToTop"><div class="wrapper" style="transform: rotate(45deg);"></div></div>';
+        el.classList.add(baseClassName);
+        el.innerHTML = `
+            <div class="${baseClassName}--inner">
+                <div class="${baseClassName}--icon" style="transform: rotate(45deg);"></div>
+            </div>
+        `;
 
         return el;
     }
 
-    styleHTML(): HTMLElement {
-        const styleString = this.styles();
+    createStyleElement(): HTMLElement {
         const styleEl = document.createElement('style');
-        styleEl.innerHTML = styleString;
+        styleEl.innerHTML = this.getStyles();
 
         return styleEl;
     }
 
-    styles(): string {
+    getStyles(): string {
         const { arrowColour, color, placement, shape } = this.settings;
         const shapeObject = {
             bottom: (shape === 'square') ? '0px' : '10px',
-            borderRadius: (shape === 'square') ? 'none' : '99em',
+            borderRadius: (shape === 'square') ? '0' : '99em',
             boxShadow: (shape === 'square') ? 'none' : '0px 0px 20px rgba(0,0,0,0.25)',
         };
 
         return `
-            #returnToTopContainer {
+            .${baseClassName} {
                 position: fixed;
                 width: 50px;
                 height: 50px;
@@ -103,7 +107,7 @@ export class ReturnToTop {
                 ${placement || ReturnToTopPlacement.right}: 10px;
             }
 
-            #returnToTop {
+            .${baseClassName}--inner {
                 z-index: 100;
                 cursor: pointer;
                 background-color: ${color};
@@ -114,25 +118,26 @@ export class ReturnToTop {
                 height: 100%;
             }
 
-            #returnToTop .wrapper {
+            .${baseClassName}--icon {
                 position: relative;
                 width: 100%;
                 height: 100%;
             }
 
-            #returnToTop .wrapper::before,#returnToTop .wrapper::after {
+            .${baseClassName}--icon::before,
+            .${baseClassName}--icon::after {
                 content: "";
                 position: absolute;
             }
 
-            #returnToTop .wrapper::before {
+            .${baseClassName}--icon::before {
                 height: 40%;
                 top: 25%;
                 left: 35%;
                 border-left: 3px solid ${arrowColour};
             }
 
-            #returnToTop .wrapper::after {
+            .${baseClassName}--icon::after {
                 height: 0;
                 width: 40%;
                 bottom: 35%;
@@ -147,11 +152,9 @@ export class ReturnToTop {
     }
 
     setReturnTopRotation(): void {
-        const docHeight = Math.max(document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight)
-        const scrolDistance = window.scrollY
-        const windowHeight = window.innerHeight
+        const rotation = Math.min((window.scrollY / window.innerHeight), 1) * DEGREES_TO_TURN
 
-        this.returnTopEl.style.transform = `rotate(${(scrolDistance / (docHeight - windowHeight)) * DEGREES_TO_TURN}deg)`;
+        this.returnTopEl.style.transform = `rotate(${rotation}deg)`;
     }
 
     scrollToTop(): void {
