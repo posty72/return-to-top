@@ -8,3 +8,6 @@ This script appends a button that will return the user to the top of the page. I
 - arrowColour: the color of the rotating arrow inside the button. Will take any hex or rgb[a] value. Default is '#ffffff' (white)
 - shape: the shape of the button. Options are 'round' or 'square'
 
+### Development
+
+To build from source, run `npm run build`. Use `npm run example` to see it running in a browser on a simple test page.
