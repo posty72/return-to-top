@@ -70,7 +70,7 @@ export class ReturnToTop {
         el.classList.add(baseClassName);
         el.innerHTML = `
             <div class="${baseClassName}--inner">
-                <div class="${baseClassName}--icon" style="transform: rotate(45deg);"></div>
+                <div class="${baseClassName}--icon"></div>
             </div>
         `;
 
@@ -123,6 +123,7 @@ export class ReturnToTop {
                 position: relative;
                 width: 100%;
                 height: 100%;
+                transform: rotate(45deg);
             }
 
             .${baseClassName}--icon::before,
