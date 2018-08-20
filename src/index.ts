@@ -22,6 +22,10 @@ interface Settings {
     placement?: ReturnToTopPlacement,
     color?: string,
     shape?: ReturnToTopShape,
+    animation?: boolean | {
+        rotate?: boolean,
+        fade?: boolean
+    }
 }
 
 export class ReturnToTop {
@@ -30,6 +34,7 @@ export class ReturnToTop {
         placement: ReturnToTopPlacement.right,
         color: '#000000',
         shape: ReturnToTopShape.square,
+        animation: true
     };
     returnTopEl: HTMLElement
     returnTopContainerEl: HTMLElement
@@ -58,8 +63,17 @@ export class ReturnToTop {
         }, BETWEEN_PAGELOAD_CHECKS);
 
         window.addEventListener('scroll', () => {
-            this.setReturnTopRotation();
-            this.setReturnTopOpacity();
+            if (this.settings.animation === true) {
+                this.setReturnTopRotation();
+                this.setReturnTopOpacity();
+            } else if (this.settings.animation) {
+                if (this.settings.animation.rotate !== false) {
+                    this.setReturnTopRotation();
+                }
+                if (this.settings.animation.fade !== false) {
+                    this.setReturnTopOpacity();
+                }
+            }
         });
 
         this.returnTopEl.addEventListener('click', this.scrollToTop);
@@ -104,7 +118,7 @@ export class ReturnToTop {
                 background-color: ${color};
                 z-index: 100;
                 cursor: pointer;
-                opacity: 0;
+                ${this.settings.animation === true || (this.settings.animation && this.settings.animation.fade) !== false ? 'opacity: 0;' : ''}
                 ${placement || ReturnToTopPlacement.right}: 10px;
             }
 
@@ -123,7 +137,7 @@ export class ReturnToTop {
                 position: relative;
                 width: 100%;
                 height: 100%;
-                transform: rotate(45deg);
+                ${this.settings.animation === true || (this.settings.animation && this.settings.animation.rotate) !== false ? 'transform: rotate(45deg);' : 'transform: rotate(135deg);'}
             }
 
             .${baseClassName}--icon::before,

@@ -5,4 +5,8 @@ const _returnToTop = new ReturnToTop({
     placement: 'right',
     color: '#000000',
     shape: 'circle',
+    animation: {
+        fade: true,
+        rotate: true
+    }
 })
