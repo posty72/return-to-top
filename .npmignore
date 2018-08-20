@@ -1,1 +1,4 @@
 example
+.editorconfig
+.stylelintrc.json
+tsconfig.json
