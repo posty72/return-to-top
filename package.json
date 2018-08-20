@@ -1,6 +1,6 @@
 {
   "name": "return-to-top",
-  "version": "3.0.2",
+  "version": "3.1.0",
   "description": "Adds a return to top button at the bottom of the page",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
