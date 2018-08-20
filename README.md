@@ -1,8 +1,10 @@
 # Return to top button
 
-This script appends a button that will return the user to the top of the page. It's independant of other libraries and self initiates. Simply add your settings to the 'returnToTopSettings' object, add it somewhere on your page and hey presto!
+This script adds a button that will return the user to the top of the page. It's independant of other libraries and can self-initiate. 
 
 ### Settings
+
+Settings can be added by instanitating the ReturnToTop class and passing in an object.
 
 | Name               | Type              | Description                                                                                                    |
 | ------------------ | ----------------- | -------------------------------------------------------------------------------------------------------------- |
