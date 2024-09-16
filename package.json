@@ -21,6 +21,6 @@
   },
   "homepage": "https://github.com/posty72/return-to-top#readme",
   "devDependencies": {
-    "typescript": "^3.0.1"
+    "typescript": "^5.6.2"
   }
 }

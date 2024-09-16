@@ -1,54 +1,56 @@
 /** ***************************
-**** Return to Top Button ****
-*****************************/
+ **** Return to Top Button ****
+ *****************************/
 
 const BETWEEN_UPDATE_CHECKS: number = 15;
 const BETWEEN_PAGELOAD_CHECKS: number = 50;
 const DEGREES_TO_TURN: number = 90;
-const baseClassName = 'return-to-top'
+const baseClassName = "return-to-top";
 
 export enum ReturnToTopPlacement {
-    right = 'right',
-    left = 'left',
+    right = "right",
+    left = "left",
 }
 
 export enum ReturnToTopShape {
-    circle = 'circle',
-    square = 'square',
+    circle = "circle",
+    square = "square",
 }
 
 interface ReturnToTopSettings {
-    arrowColour?: string,
-    placement?: ReturnToTopPlacement,
-    color?: string,
-    shape?: ReturnToTopShape,
-    animation?: boolean | {
-        rotate?: boolean,
-        fade?: boolean
-    }
+    arrowColour?: string;
+    placement?: ReturnToTopPlacement;
+    color?: string;
+    shape?: ReturnToTopShape;
+    animation?:
+        | boolean
+        | {
+              rotate?: boolean;
+              fade?: boolean;
+          };
 }
 
 export class ReturnToTop {
     settings: ReturnToTopSettings = {
-        arrowColour: '#FFFFFF',
+        arrowColour: "#FFFFFF",
         placement: ReturnToTopPlacement.right,
-        color: '#000000',
+        color: "#000000",
         shape: ReturnToTopShape.square,
-        animation: true
+        animation: true,
     };
-    returnTopEl: HTMLElement
-    returnTopContainerEl: HTMLElement
+    returnTopEl: HTMLElement;
+    returnTopContainerEl: HTMLElement;
 
     constructor(SETTINGS?: ReturnToTopSettings) {
-        this.setRotation = this.setRotation.bind(this)
-        this.setOpacity = this.setOpacity.bind(this)
-        this.handleClick = this.handleClick.bind(this)
-        this.handleScroll = this.handleScroll.bind(this)
+        this.setRotation = this.setRotation.bind(this);
+        this.setOpacity = this.setOpacity.bind(this);
+        this.handleClick = this.handleClick.bind(this);
+        this.handleScroll = this.handleScroll.bind(this);
 
-        if (SETTINGS || typeof SETTINGS === 'object') {
+        if (SETTINGS || typeof SETTINGS === "object") {
             this.settings = {
                 ...this.settings,
-                ...SETTINGS
+                ...SETTINGS,
             };
         }
 
@@ -56,22 +58,26 @@ export class ReturnToTop {
         this.returnTopEl = this.returnTopContainerEl.children[0] as HTMLElement;
 
         const timer = setInterval(() => {
-            if (document.readyState === 'complete') {
-                const headElement = document.getElementsByTagName('head')[0];
-                headElement.insertBefore(this.createStyleElement(), headElement.firstChild);
-                document.getElementsByTagName('body')[0].appendChild(this.returnTopContainerEl);
+            if (document.readyState === "complete") {
+                const headElement = document.getElementsByTagName("head")[0];
+                headElement.insertBefore(
+                    this.createStyleElement(),
+                    headElement.firstChild
+                );
+                document
+                    .getElementsByTagName("body")[0]
+                    .appendChild(this.returnTopContainerEl);
                 clearInterval(timer);
             }
         }, BETWEEN_PAGELOAD_CHECKS);
 
-        window.addEventListener('scroll', this.handleScroll);
-        this.returnTopEl.addEventListener('click', this.handleClick);
+        window.addEventListener("scroll", this.handleScroll);
+        this.returnTopEl.addEventListener("click", this.handleClick);
     }
-
 
     // Element creators
     createElement(): HTMLElement {
-        const el = document.createElement('div');
+        const el = document.createElement("div");
         el.classList.add(baseClassName);
         el.innerHTML = `
             <div class="${baseClassName}--inner">
@@ -83,20 +89,20 @@ export class ReturnToTop {
     }
 
     createStyleElement(): HTMLElement {
-        const styleEl = document.createElement('style');
+        const styleEl = document.createElement("style");
         styleEl.innerHTML = this.getStyles();
 
         return styleEl;
     }
 
-
     // Helper
     public getStyles(): string {
         const { arrowColour, color, placement, shape } = this.settings;
         const shapeObject = {
-            bottom: (shape === 'square') ? '0px' : '10px',
-            borderRadius: (shape === 'square') ? '0' : '99em',
-            boxShadow: (shape === 'square') ? 'none' : '0px 0px 20px rgba(0,0,0,0.25)',
+            bottom: shape === "square" ? "0px" : "10px",
+            borderRadius: shape === "square" ? "0" : "99em",
+            boxShadow:
+                shape === "square" ? "none" : "0px 0px 20px rgba(0,0,0,0.25)",
         };
 
         return `
@@ -111,7 +117,13 @@ export class ReturnToTop {
                 background-color: ${color};
                 z-index: 100;
                 cursor: pointer;
-                ${this.settings.animation === true || (this.settings.animation && this.settings.animation.fade) !== false ? 'opacity: 0;' : ''}
+                ${
+                    this.settings.animation === true ||
+                    (this.settings.animation &&
+                        this.settings.animation.fade) !== false
+                        ? "opacity: 0;"
+                        : ""
+                }
                 ${placement || ReturnToTopPlacement.right}: 10px;
             }
 
@@ -130,7 +142,13 @@ export class ReturnToTop {
                 position: relative;
                 width: 100%;
                 height: 100%;
-                ${this.settings.animation === true || (this.settings.animation && this.settings.animation.rotate) !== false ? 'transform: rotate(45deg);' : 'transform: rotate(135deg);'}
+                ${
+                    this.settings.animation === true ||
+                    (this.settings.animation &&
+                        this.settings.animation.rotate) !== false
+                        ? "transform: rotate(45deg);"
+                        : "transform: rotate(135deg);"
+                }
             }
 
             .${baseClassName}--icon::before,
@@ -156,18 +174,20 @@ export class ReturnToTop {
         `;
     }
 
-
     // Setters
     setOpacity(): void {
-        this.returnTopContainerEl.style.opacity = Math.min((window.scrollY / window.innerHeight), 1).toString();
+        this.returnTopContainerEl.style.opacity = Math.min(
+            window.scrollY / window.innerHeight,
+            1
+        ).toString();
     }
 
     setRotation(): void {
-        const rotation = Math.min((window.scrollY / window.innerHeight), 1) * DEGREES_TO_TURN
+        const rotation =
+            Math.min(window.scrollY / window.innerHeight, 1) * DEGREES_TO_TURN;
 
         this.returnTopEl.style.transform = `rotate(${rotation}deg)`;
     }
-
 
     // Handlers
     private handleScroll(): void {
@@ -188,7 +208,7 @@ export class ReturnToTop {
         const scroll = -window.scrollY;
         const timer = setInterval(() => {
             if (window.scrollY > 1) {
-                window.scrollBy(0, (scroll / BETWEEN_UPDATE_CHECKS));
+                window.scrollBy(0, scroll / BETWEEN_UPDATE_CHECKS);
             } else {
                 clearInterval(timer);
             }
