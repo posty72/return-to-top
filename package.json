@@ -5,10 +5,13 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
     "example": "npm run build &&  npm start --prefix ./example",
-    "prepublish": "npm run build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "prepare": "npm run build",
+    "test": "jest --coverage",
+    "test:types": "tsc --noEmit",
+    "release": "semantic-release",
+    "prepack": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -21,6 +24,57 @@
   },
   "homepage": "https://github.com/posty72/return-to-top#readme",
   "devDependencies": {
-    "typescript": "^5.6.2"
+    "typescript": "^5.6.2",
+    "@types/jest": "^26.0.22",
+    "@typescript-eslint/eslint-plugin": "^4.20.0",
+    "@typescript-eslint/parser": "^4.20.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^7.23.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.3.1",
+    "husky": "^8.0.3",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "jest-junit": "^12.0.0",
+    "prettier": "^2.2.1",
+    "pretty-quick": "^3.1.0",
+    "semantic-release": "^21.0.1",
+    "ts-jest": "^29.2.5"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testMatch": [
+      "<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
+    ],
+    "testEnvironment": "jsdom",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json"
+    ],
+    "reporters": [
+      "default",
+      "jest-junit"
+    ],
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "./src/**/*.{js,jsx,ts,tsx}"
+    ],
+    "coverageReporters": [
+      "json",
+      "lcov",
+      "text",
+      "clover",
+      "json-summary"
+    ]
+  },
+  "jest-junit": {
+    "outputDirectory": "test-results",
+    "outputName": "junit.xml"
   }
 }
