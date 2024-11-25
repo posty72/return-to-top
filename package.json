@@ -25,7 +25,7 @@
   "homepage": "https://github.com/posty72/return-to-top#readme",
   "devDependencies": {
     "typescript": "^5.6.2",
-    "@types/jest": "^26.0.22",
+    "@types/jest": "^29.5.14",
     "@typescript-eslint/eslint-plugin": "^4.20.0",
     "@typescript-eslint/parser": "^4.20.0",
     "cz-conventional-changelog": "^3.3.0",
